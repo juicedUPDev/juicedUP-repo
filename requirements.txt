@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+google-generativeai
+firebase-admin
+python-dotenv
+pydantic
+pytest
+black
+flake8
