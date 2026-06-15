@@ -135,16 +135,17 @@ jobs:
           python-version: '3.11'
           cache: 'pip'
       
-      - name: Install security tools
+      - name: Install security tools and dependencies
         run: |
           python -m pip install --upgrade pip
+          pip install -r requirements.txt
           pip install bandit safety
 
       - name: Run Bandit security scan
         run: bandit -r src/ -ll || echo "Security issues found"
       
       - name: Check dependencies with Safety
-        run: safety check || echo "Vulnerable dependencies found"
+        run: safety check --json || echo "Vulnerable dependencies found"
 
   build-docker:
     name: Build Docker Image
