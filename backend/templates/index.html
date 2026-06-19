@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maypo AI Consulting Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        nav {
+            background: #f8f9fa;
+            padding: 15px 30px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        
+        nav a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+        
+        nav a:hover {
+            color: #764ba2;
+        }
+        
+        main {
+            padding: 40px 30px;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+        }
+        
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+        
+        .feature-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+        }
+        
+        .feature-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+        
+        .feature-card p {
+            color: #666;
+        }
+        
+        .api-endpoint {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            border-left: 4px solid #764ba2;
+        }
+        
+        .api-endpoint code {
+            color: #764ba2;
+            font-weight: 600;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            background: #28a745;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        footer {
+            background: #f8f9fa;
+            padding: 20px 30px;
+            text-align: center;
+            color: #666;
+            border-top: 2px solid #e9ecef;
+        }
+        
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            main {
+                padding: 20px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🤖 Maypo AI Consulting Platform</h1>
+            <p>Enterprise-grade AI consulting powered by advanced prompt engineering</p>
+            <div style="margin-top: 15px;">
+                <span class="status-badge">✓ Active</span>
+            </div>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#api">API Endpoints</a></li>
+                <li><a href="#documentation">Documentation</a></li>
+                <li><a href="#analytics">Analytics</a></li>
+            </ul>
+        </nav>
+        
+        <main>
+            <section class="section" id="features">
+                <h2>✨ Key Features</h2>
+                <div class="features">
+                    <div class="feature-card">
+                        <h3>🤖 AI-Powered Consulting</h3>
+                        <p>Intelligent recommendations for various business needs using state-of-the-art AI models</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>🔧 Prompt Engineering Console</h3>
+                        <p>Customize and version AI prompts for specific use cases with full version control</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>📊 Real-Time Analytics</h3>
+                        <p>Live data processing and performance monitoring with Vercel Web Analytics</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>💰 Cost Optimization</h3>
+                        <p>Built-in strategies to minimize expenses while maximizing performance</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>🔐 Enterprise Security</h3>
+                        <p>Secure API endpoints with robust authentication mechanisms</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>📈 Scalable Architecture</h3>
+                        <p>Handles high-volume concurrent requests with ease</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="section" id="api">
+                <h2>🔌 API Endpoints</h2>
+                <p>Access our powerful AI consulting features through these RESTful endpoints:</p>
+                
+                <div style="margin-top: 20px;">
+                    <div class="api-endpoint">
+                        <strong>GET</strong> <code>/api/v1/consult</code>
+                        <p style="margin-top: 5px; color: #666;">Get AI consultation based on your query</p>
+                    </div>
+                    
+                    <div class="api-endpoint">
+                        <strong>POST</strong> <code>/api/v1/submit</code>
+                        <p style="margin-top: 5px; color: #666;">Submit data for processing</p>
+                    </div>
+                    
+                    <div class="api-endpoint">
+                        <strong>GET</strong> <code>/api/v1/history</code>
+                        <p style="margin-top: 5px; color: #666;">View consultation history</p>
+                    </div>
+                    
+                    <div class="api-endpoint">
+                        <strong>GET</strong> <code>/api/v1/prompts</code>
+                        <p style="margin-top: 5px; color: #666;">List available prompts</p>
+                    </div>
+                    
+                    <div class="api-endpoint">
+                        <strong>GET</strong> <code>/api/v1/analytics/usage</code>
+                        <p style="margin-top: 5px; color: #666;">Get usage statistics</p>
+                    </div>
+                    
+                    <div class="api-endpoint">
+                        <strong>GET</strong> <code>/health</code>
+                        <p style="margin-top: 5px; color: #666;">Check API health status</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="section" id="documentation">
+                <h2>📚 Documentation</h2>
+                <p>Complete documentation is available in the repository:</p>
+                <ul style="margin-top: 15px; margin-left: 20px; line-height: 2;">
+                    <li><a href="https://github.com/juicedUPDev/maypo/blob/main/docs/API.md" target="_blank">API Reference</a></li>
+                    <li><a href="https://github.com/juicedUPDev/maypo/blob/main/docs/CONFIGURATION.md" target="_blank">Configuration Guide</a></li>
+                    <li><a href="https://github.com/juicedUPDev/maypo/blob/main/docs/PROMPTS.md" target="_blank">Prompt Engineering Guide</a></li>
+                    <li><a href="https://github.com/juicedUPDev/maypo/blob/main/docs/DEPLOYMENT.md" target="_blank">Deployment Guide</a></li>
+                    <li><a href="https://github.com/juicedUPDev/maypo/blob/main/docs/ARCHITECTURE.md" target="_blank">System Architecture</a></li>
+                </ul>
+            </section>
+            
+            <section class="section" id="analytics">
+                <h2>📊 Analytics & Monitoring</h2>
+                <p>This platform is now equipped with <strong>Vercel Web Analytics</strong> for real-time tracking:</p>
+                <div class="features" style="margin-top: 20px;">
+                    <div class="feature-card">
+                        <h3>📈 Page Views</h3>
+                        <p>Track visitor engagement and popular pages</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>⚡ Performance</h3>
+                        <p>Monitor load times and user experience</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>🌍 Demographics</h3>
+                        <p>Understand your user base location and behavior</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p><strong>Maypo AI Consulting Platform</strong> | Version 1.0.0</p>
+            <p style="margin-top: 10px;">
+                <a href="https://github.com/juicedUPDev/maypo" target="_blank" style="color: #667eea; text-decoration: none;">GitHub Repository</a> | 
+                <a href="https://github.com/juicedUPDev/maypo/blob/main/LICENSE" target="_blank" style="color: #667eea; text-decoration: none;">MIT License</a>
+            </p>
+            <p style="margin-top: 10px; font-size: 0.9rem; color: #999;">
+                Powered by FastAPI | Analytics by Vercel
+            </p>
+        </footer>
+    </div>
+    
+    <!-- Vercel Web Analytics Script -->
+    <script>
+        window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>
