@@ -19,8 +19,8 @@ pytest-cov>=4.1.0
 pytest-asyncio>=0.21.1
 
 # Code quality
-black>=23.12.1
+black>=24.1.1
 isort>=5.13.2
-flake8>=6.1.0
-bandit>=1.7.5
-safety>=2.3.5
+flake8>=7.0.0
+bandit>=1.7.6
+safety>=3.0.1
