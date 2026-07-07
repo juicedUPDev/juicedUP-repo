@@ -530,6 +530,6 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 ---
 
-**Made with ❤️ by the Maypo Team**
+**Made with ❤️ by the juicedUp Team**
 
 Last Updated: June 11, 2026 | Version: 1.0.0
