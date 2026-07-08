@@ -3,7 +3,7 @@
   "builds": [
     {
       "src": "backend/app.py",
-      "use": "@vercel/python"
+      "use": "@vercel/python@3.1.0"
     }
   ],
   "routes": [
@@ -14,5 +14,11 @@
   ],
   "env": {
     "PYTHON_VERSION": "3.9"
+  },
+  "functions": {
+    "backend/app.py": {
+      "memory": 3008,
+      "maxDuration": 30
+    }
   }
 }
