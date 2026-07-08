@@ -1,0 +1,41 @@
+# Dependencies
+node_modules
+.npm
+.yarn
+
+# Testing
+coverage
+.pytest_cache
+htmlcov
+
+# Production
+build
+dist
+
+# Misc
+.env.local
+.env.*.local
+*.log
+*.swp
+*.swo
+*~
+
+# Version control
+.git
+.gitignore
+
+# IDEs
+.vscode
+.idea
+*.swp
+
+# CI/CD
+.github
+.gitlab-ci.yml
+.travis.yml
+
+# Documentation
+docs
+README.md
+CHANGELOG.md
+LICENSE
