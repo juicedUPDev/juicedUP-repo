@@ -5,6 +5,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pathlib import Path
 import os
+from mangum import Mangum
 
 app = FastAPI(
     title="Maypo AI Consulting Platform",
@@ -72,6 +73,10 @@ try:
     app.include_router(analytics_router)
 except ImportError as e:
     print(f"Warning: Could not import analytics router: {e}")
+
+
+# Export handler for Vercel serverless functions
+handler = Mangum(app)
 
 
 if __name__ == "__main__":
