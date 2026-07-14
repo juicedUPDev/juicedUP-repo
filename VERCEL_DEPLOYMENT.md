@@ -7,38 +7,47 @@
 
 ## Deployment Steps
 
-### 1. Prepare Environment Variables
-Configure these in your Vercel project settings:
+### Option 1: Via GitHub Integration (Recommended)
+1. Go to https://vercel.com/dashboard
+2. Click "Add New Project"
+3. Import your GitHub repository: `juicedUPDev/juicedUP-repo`
+4. Configure environment variables in Vercel settings
+5. Click Deploy
 
-```
-OPENAI_API_KEY=your_key
-ENVIRONMENT=production
-DEBUG=false
-```
-
-### 2. Deploy via CLI
+### Option 2: Via Vercel CLI
 ```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Login to Vercel
+vercel login
+
+# Deploy to production
 vercel --prod
 ```
 
-Or connect your GitHub repository to Vercel for automatic deployments.
+## Environment Variables Setup
 
-### 3. Deploy via Vercel Dashboard
-1. Go to https://vercel.com/dashboard
-2. Import your GitHub repository
-3. Configure environment variables
-4. Click Deploy
+In your Vercel project dashboard, add these environment variables:
+
+```
+OPENAI_API_KEY=your_actual_key
+ENVIRONMENT=production
+DEBUG=false
+LOG_LEVEL=INFO
+JWT_SECRET=your_secret_key
+FIREBASE_CREDENTIALS_PATH=/path/to/serviceAccountKey.json
+```
 
 ## Verification
 
-After deployment, verify the application:
+After deployment, verify the application is running:
 
 ```bash
-curl https://your-domain.vercel.app/health
-```
+# Check health endpoint
+curl https://your-vercel-domain.vercel.app/health
 
-Expected response:
-```json
+# Expected response:
 {
   "status": "healthy",
   "message": "Maypo AI Consulting Platform is running",
@@ -47,26 +56,60 @@ Expected response:
 }
 ```
 
+## API Endpoints
+
+Once deployed, you can access:
+
+- **Dashboard**: `https://your-domain.vercel.app/`
+- **Health Check**: `https://your-domain.vercel.app/health`
+- **Prompts API**: `https://your-domain.vercel.app/api/prompts`
+- **Consulting API**: `https://your-domain.vercel.app/api/consulting`
+- **Analytics API**: `https://your-domain.vercel.app/api/analytics/dashboard`
+
+## Enable Web Analytics
+
+1. Go to your Vercel project dashboard
+2. Navigate to **Analytics** tab
+3. Click **Enable Web Analytics**
+4. Data will start collecting automatically
+
 ## Troubleshooting
 
 ### Build Fails
-- Check Python version in `vercel.json`
-- Verify all dependencies in `requirements.txt`
-- Check for missing route files
+- ✅ Python version updated to 3.11
+- ✅ Dependencies pinned in requirements.txt
+- ✅ Check build logs in Vercel dashboard
 
 ### Routes Not Working
 - Ensure route files exist in `backend/routes/`
-- Check CORS configuration
-- Verify API endpoints in logs
+- Check route imports in `backend/app.py`
+- Verify CORS is enabled
 
 ### Analytics Not Showing
-- Enable Web Analytics in Vercel dashboard
-- Check browser console for errors
+- Enable in Vercel dashboard
+- Check browser console for script errors
 - Verify `/_vercel/insights/script.js` loads
 
 ## Monitoring
 
-Monitor your deployment:
-- **Logs**: View in Vercel dashboard
-- **Analytics**: Check Vercel Web Analytics tab
-- **Performance**: Use Vercel Analytics dashboard
+- **Real-time Logs**: View in Vercel dashboard
+- **Web Analytics**: Check Vercel Analytics tab
+- **Performance**: Use Vercel Observability
+- **Error Tracking**: Monitor health endpoint
+
+## Rollback
+
+If deployment has issues:
+```bash
+vercel rollback
+```
+
+## Next Steps
+
+1. ✅ Fixed and pinned dependencies
+2. ✅ Updated Python to 3.11
+3. ✅ Created API route structure
+4. ✅ Added environment configuration
+5. 🔲 Deploy to Vercel (run the deployment steps above)
+6. 🔲 Configure environment variables in Vercel dashboard
+7. 🔲 Enable Web Analytics
