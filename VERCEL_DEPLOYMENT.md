@@ -28,16 +28,34 @@ vercel --prod
 
 ## Environment Variables Setup
 
-In your Vercel project dashboard, add these environment variables:
+In your Vercel project dashboard, add these environment variables. The repository's `.env.example` is the source of truth and should be mirrored here for a working deployment.
 
-```
-OPENAI_API_KEY=your_actual_key
+### Required for app startup
+```env
 ENVIRONMENT=production
 DEBUG=false
 LOG_LEVEL=INFO
-JWT_SECRET=your_secret_key
-FIREBASE_CREDENTIALS_PATH=/path/to/serviceAccountKey.json
+OPENAI_API_KEY=your_actual_key
+OPENAI_MODEL=gpt-4
+JWT_SECRET=your_super_secret_key
+JWT_ALGORITHM=HS256
+JWT_EXPIRATION_HOURS=24
 ```
+
+### Optional, but commonly used in this project
+```env
+DATABASE_URL=postgresql://user:password@localhost:5432/maypo
+REDIS_URL=redis://localhost:6379/0
+FIREBASE_CREDENTIALS_PATH=/path/to/serviceAccountKey.json
+MONTHLY_BUDGET_LIMIT=5000
+COST_ALERT_THRESHOLD=0.80
+ENABLE_ANALYTICS=true
+ENABLE_VERSIONING=true
+ENABLE_COST_OPTIMIZATION=true
+ENABLE_CACHE=true
+```
+
+> If you are deploying to Vercel without a local database or Redis, set these values only if the app or route handlers use them in your environment. For production, prefer Vercel project env vars over hardcoded secrets.
 
 ## Verification
 
