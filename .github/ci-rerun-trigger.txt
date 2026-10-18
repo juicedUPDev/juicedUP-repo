@@ -1,0 +1,5 @@
+Trigger CI re-run
+
+This file is a no-op commit to trigger GitHub Actions workflows after dependency updates.
+
+Committed by Copilot to retrigger pipeline.
