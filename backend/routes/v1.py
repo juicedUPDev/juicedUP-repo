@@ -1,6 +1,7 @@
 """V1 API routes for Maypo platform with RESTful design."""
-from typing import Dict, Any, List, Optional
 from datetime import datetime
+from typing import Any, Dict, List, Optional
+from uuid import uuid4
 
 from fastapi import APIRouter, HTTPException, Query, status
 from pydantic import BaseModel, Field
@@ -9,7 +10,7 @@ v1_router = APIRouter(prefix="/api/v1", tags=["v1"])
 
 
 class ConsultationRequest(BaseModel):
-    """Request model for creating a consultation."""
+    """Request payload for creating a consultation."""
 
     query: str = Field(..., min_length=1, description="Consultation query")
     topic: str = Field("general", description="Topic of consultation")
@@ -17,10 +18,18 @@ class ConsultationRequest(BaseModel):
 
 
 class SubmitRequest(BaseModel):
-    """Request model for submitting data."""
+    """Request payload for submitting data."""
 
     data: Dict[str, Any] = Field(..., description="Data to submit")
     type: Optional[str] = Field("general", description="Type of submission")
+
+
+class PaginationResponse(BaseModel):
+    """Pagination metadata returned by list endpoints."""
+
+    skip: int
+    limit: int
+    total: int
 
 
 class ConsultationResponse(BaseModel):
@@ -32,8 +41,15 @@ class ConsultationResponse(BaseModel):
     recommendation: str
     model: str
     confidence: float
+    status: str = "completed"
     created_at: str
-    status: Optional[str] = None
+
+
+class ConsultationListResponse(BaseModel):
+    """Response payload for listing consultations."""
+
+    data: List[ConsultationResponse]
+    pagination: PaginationResponse
 
 
 class SubmissionResponse(BaseModel):
@@ -45,6 +61,8 @@ class SubmissionResponse(BaseModel):
     data_keys: List[str]
     message: str
     created_at: str
+    result: Optional[str] = None
+    completed_at: Optional[str] = None
 
 
 class PromptResponse(BaseModel):
@@ -56,6 +74,13 @@ class PromptResponse(BaseModel):
     description: Optional[str] = None
     content: Optional[str] = None
     created_at: Optional[str] = None
+
+
+class PromptListResponse(BaseModel):
+    """Response payload for listing prompts."""
+
+    prompts: List[PromptResponse]
+    total: int
 
 
 class UsageAnalyticsResponse(BaseModel):
@@ -123,6 +148,16 @@ PROMPTS: Dict[str, Dict[str, Any]] = {
 }
 
 
+def _new_consultation_id() -> str:
+    """Generate a unique consultation identifier."""
+    return f"c_{uuid4().hex[:8]}"
+
+
+def _new_submission_id() -> str:
+    """Generate a unique submission identifier."""
+    return f"sub_{uuid4().hex[:8]}"
+
+
 @v1_router.post(
     "/consultations",
     status_code=status.HTTP_201_CREATED,
@@ -138,16 +173,18 @@ async def create_consultation(request: ConsultationRequest):
             detail="Query cannot be empty or whitespace only",
         )
 
+    consultation_id = _new_consultation_id()
     consultation = {
-        "id": "c_102",
+        "id": consultation_id,
         "topic": request.topic,
         "query": request.query,
         "recommendation": f"Consultation result for '{request.query}': Standard prompt optimization applied.",
         "model": "gpt-4o",
         "confidence": 0.95,
+        "status": "completed",
         "created_at": datetime.utcnow().isoformat() + "Z",
     }
-    CONSULTATIONS[consultation["id"]] = consultation
+    CONSULTATIONS[consultation_id] = consultation
     return consultation
 
 
@@ -179,7 +216,7 @@ async def get_consultation(consultation_id: str):
 @v1_router.get(
     "/consultations",
     status_code=status.HTTP_200_OK,
-    response_model=Dict[str, Any],
+    response_model=ConsultationListResponse,
     summary="List all consultations",
     description="Retrieve consultation history with pagination",
 )
@@ -188,10 +225,15 @@ async def list_consultations(
     limit: int = Query(10, ge=1, le=100, description="Maximum records to return"),
 ):
     """View consultation history with pagination."""
-    consultations = list(CONSULTATIONS.values())[skip : skip + limit]
+    consultations = sorted(CONSULTATIONS.values(), key=lambda item: item["created_at"], reverse=True)
+    page = consultations[skip : skip + limit]
     return {
-        "data": consultations,
-        "pagination": {"skip": skip, "limit": limit, "total": len(CONSULTATIONS)},
+        "data": page,
+        "pagination": {
+            "skip": skip,
+            "limit": limit,
+            "total": len(consultations),
+        },
     }
 
 
@@ -210,15 +252,16 @@ async def create_submission(request: SubmitRequest):
             detail="Submission data cannot be empty",
         )
 
+    submission_id = _new_submission_id()
     submission = {
-        "id": "sub_123",
+        "id": submission_id,
         "status": "received",
         "type": request.type,
         "data_keys": list(request.data.keys()),
         "message": "Data successfully queued for processing",
         "created_at": datetime.utcnow().isoformat() + "Z",
     }
-    SUBMISSIONS[submission["id"]] = submission
+    SUBMISSIONS[submission_id] = submission
     return submission
 
 
@@ -250,13 +293,14 @@ async def get_submission(submission_id: str):
 @v1_router.get(
     "/prompts",
     status_code=status.HTTP_200_OK,
-    response_model=Dict[str, Any],
+    response_model=PromptListResponse,
     summary="List available prompts",
     description="Retrieve all available prompt templates",
 )
 async def list_prompts():
     """List all available prompts for consultation."""
-    return {"prompts": list(PROMPTS.values()), "total": len(PROMPTS)}
+    prompts = list(PROMPTS.values())
+    return {"prompts": prompts, "total": len(prompts)}
 
 
 @v1_router.get(
