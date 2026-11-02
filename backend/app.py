@@ -1,52 +1,47 @@
+from pathlib import Path
+import os
+
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from pathlib import Path
-import os
 from mangum import Mangum
 
 app = FastAPI(
     title="Maypo AI Consulting Platform",
     description="Enterprise-grade AI consulting powered by advanced prompt engineering",
-    version="1.0.0"
+    version="1.0.0",
 )
 
-# Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"]
+    allow_headers=["*"],
 )
 
-# Setup static files and templates
 backend_path = Path(__file__).parent
 static_path = backend_path / "static"
 templates_path = backend_path / "templates"
 
-# Create directories if they don't exist
 static_path.mkdir(exist_ok=True)
 templates_path.mkdir(exist_ok=True)
 
-# Mount static files
 app.mount("/static", StaticFiles(directory=str(static_path)), name="static")
-
-# Setup templates
 templates = Jinja2Templates(directory=str(templates_path))
 
 
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request):
-    """Serve the main dashboard with Vercel Web Analytics"""
+    """Serve the main dashboard."""
     return templates.TemplateResponse("index.html", {"request": request})
 
 
 @app.get("/health")
 async def health_check():
-    """Health check endpoint"""
+    """Health check endpoint."""
     return {
         "status": "healthy",
         "message": "Maypo AI Consulting Platform is running",
@@ -57,11 +52,13 @@ async def health_check():
 
 @app.get("/ads.txt")
 async def ads_txt():
-    """Serve Google AdSense ads.txt snippet if needed"""
-    return HTMLResponse("google.com, pub-7390267678780075, DIRECT, f08c47fec0942fa0", media_type="text/plain")
+    """Serve Google AdSense ads.txt snippet if needed."""
+    return HTMLResponse(
+        "google.com, pub-7390267678780075, DIRECT, f08c47fec0942fa0",
+        media_type="text/plain",
+    )
 
 
-# Include routes
 try:
     try:
         from routes.prompts import router as prompts_router
@@ -97,17 +94,11 @@ try:
     app.include_router(v1_router)
 except ImportError as e:
     print(f"Warning: Could not import v1 router: {e}")
-    from routes.chat import router as chat_router
-    app.include_router(chat_router)
-except ImportError as e:
-    print(f"Warning: Could not import chat router: {e}")
 
-
-# Export handler for Vercel serverless functions
 handler = Mangum(app)
-
 
 if __name__ == "__main__":
     import uvicorn
+
     port = int(os.getenv("PORT", 8000))
     uvicorn.run(app, host="0.0.0.0", port=port)
