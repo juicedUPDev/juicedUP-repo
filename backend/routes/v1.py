@@ -6,6 +6,11 @@ from uuid import uuid4
 from fastapi import APIRouter, HTTPException, Query, status
 from pydantic import BaseModel, Field
 
+try:
+    from backend.config import FirestoreService
+except ImportError:
+    from config import FirestoreService
+
 v1_router = APIRouter(prefix="/api/v1", tags=["v1"])
 
 
@@ -149,13 +154,81 @@ PROMPTS: Dict[str, Dict[str, Any]] = {
 
 
 def _new_consultation_id() -> str:
-    """Generate a unique consultation identifier."""
     return f"c_{uuid4().hex[:8]}"
 
 
 def _new_submission_id() -> str:
-    """Generate a unique submission identifier."""
     return f"sub_{uuid4().hex[:8]}"
+
+
+def _store_consultation(record: Dict[str, Any]) -> Dict[str, Any]:
+    try:
+        service = FirestoreService("consultations")
+        return service.create(record, record["id"])
+    except RuntimeError:
+        CONSULTATIONS[record["id"]] = record
+        return record
+
+
+def _get_consultation_by_id(consultation_id: str) -> Optional[Dict[str, Any]]:
+    try:
+        return FirestoreService("consultations").get(consultation_id)
+    except RuntimeError:
+        return CONSULTATIONS.get(consultation_id)
+
+
+def _list_consultations(skip: int = 0, limit: int = 10) -> List[Dict[str, Any]]:
+    try:
+        return FirestoreService("consultations").list(skip=skip, limit=limit)
+    except RuntimeError:
+        ordered = sorted(CONSULTATIONS.values(), key=lambda item: item["created_at"], reverse=True)
+        return ordered[skip : skip + limit]
+
+
+def _count_consultations() -> int:
+    try:
+        return FirestoreService("consultations").count()
+    except RuntimeError:
+        return len(CONSULTATIONS)
+
+
+def _store_submission(record: Dict[str, Any]) -> Dict[str, Any]:
+    try:
+        service = FirestoreService("submissions")
+        return service.create(record, record["id"])
+    except RuntimeError:
+        SUBMISSIONS[record["id"]] = record
+        return record
+
+
+def _get_submission_by_id(submission_id: str) -> Optional[Dict[str, Any]]:
+    try:
+        return FirestoreService("submissions").get(submission_id)
+    except RuntimeError:
+        return SUBMISSIONS.get(submission_id)
+
+
+def _store_prompt(record: Dict[str, Any]) -> Dict[str, Any]:
+    try:
+        service = FirestoreService("prompts")
+        return service.create(record, record["id"])
+    except RuntimeError:
+        PROMPTS[record["id"]] = record
+        return record
+
+
+def _get_prompt_by_id(prompt_id: str) -> Optional[Dict[str, Any]]:
+    try:
+        return FirestoreService("prompts").get(prompt_id)
+    except RuntimeError:
+        return PROMPTS.get(prompt_id)
+
+
+def _list_prompts() -> List[Dict[str, Any]]:
+    try:
+        return FirestoreService("prompts").list(skip=0, limit=100)
+    except RuntimeError:
+        return list(PROMPTS.values())
 
 
 @v1_router.post(
@@ -184,8 +257,7 @@ async def create_consultation(request: ConsultationRequest):
         "status": "completed",
         "created_at": datetime.utcnow().isoformat() + "Z",
     }
-    CONSULTATIONS[consultation_id] = consultation
-    return consultation
+    return _store_consultation(consultation)
 
 
 @v1_router.get(
@@ -203,7 +275,7 @@ async def get_consultation(consultation_id: str):
             detail="Invalid consultation ID format. ID must start with 'c_'",
         )
 
-    consultation = CONSULTATIONS.get(consultation_id)
+    consultation = _get_consultation_by_id(consultation_id)
     if consultation is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -225,14 +297,13 @@ async def list_consultations(
     limit: int = Query(10, ge=1, le=100, description="Maximum records to return"),
 ):
     """View consultation history with pagination."""
-    consultations = sorted(CONSULTATIONS.values(), key=lambda item: item["created_at"], reverse=True)
-    page = consultations[skip : skip + limit]
+    consultations = _list_consultations(skip=skip, limit=limit)
     return {
-        "data": page,
+        "data": consultations,
         "pagination": {
             "skip": skip,
             "limit": limit,
-            "total": len(consultations),
+            "total": _count_consultations(),
         },
     }
 
@@ -256,13 +327,12 @@ async def create_submission(request: SubmitRequest):
     submission = {
         "id": submission_id,
         "status": "received",
-        "type": request.type,
+        "type": request.type or "general",
         "data_keys": list(request.data.keys()),
         "message": "Data successfully queued for processing",
         "created_at": datetime.utcnow().isoformat() + "Z",
     }
-    SUBMISSIONS[submission_id] = submission
-    return submission
+    return _store_submission(submission)
 
 
 @v1_router.get(
@@ -280,7 +350,7 @@ async def get_submission(submission_id: str):
             detail="Invalid submission ID format",
         )
 
-    submission = SUBMISSIONS.get(submission_id)
+    submission = _get_submission_by_id(submission_id)
     if submission is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -299,7 +369,7 @@ async def get_submission(submission_id: str):
 )
 async def list_prompts():
     """List all available prompts for consultation."""
-    prompts = list(PROMPTS.values())
+    prompts = _list_prompts()
     return {"prompts": prompts, "total": len(prompts)}
 
 
@@ -318,7 +388,7 @@ async def get_prompt(prompt_id: str):
             detail="Invalid prompt ID format",
         )
 
-    prompt = PROMPTS.get(prompt_id)
+    prompt = _get_prompt_by_id(prompt_id)
     if prompt is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
