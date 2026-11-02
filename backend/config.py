@@ -7,6 +7,9 @@ from firebase_admin import credentials, firestore
 
 def _init_firebase() -> Optional[firestore.Client]:
     """Initialize Firebase Admin SDK using env-based credentials when available."""
+    if firebase_admin._apps:
+        return firestore.client()
+
     credentials_path = os.getenv("FIREBASE_CREDENTIALS_PATH")
     if credentials_path:
         cred = credentials.Certificate(credentials_path)
@@ -40,7 +43,7 @@ class FirestoreService:
 
     def create(self, document_id: str, payload: Dict[str, Any]) -> Dict[str, Any]:
         self.collection.document(document_id).set(payload)
-        return self.get(document_id)
+        return self.get(document_id) or payload
 
     def get(self, document_id: str) -> Optional[Dict[str, Any]]:
         doc = self.collection.document(document_id).get()
